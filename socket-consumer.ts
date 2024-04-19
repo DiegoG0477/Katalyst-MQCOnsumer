@@ -7,12 +7,12 @@ const PASSWORD = encodeURIComponent("guest12345");
 const HOSTNAME = "44.217.29.217:"
 const PORT = 5672
 const RABBITMQ_DATA = "Medical";
-const WEBSOCKET_SERVER_URL = "http://3.212.10.41/";
+const WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
 
 let socketIO: Socket;
 
 async function sendDatatoAPI(data: any) {
-  const apiUrl = 'https://fk5dcofqb55mxnedrc5e6p54oe0rnykq.lambda-url.us-east-1.on.aws/';
+  const apiUrl = 'http:44.221.150.52/data/medical';
 
   const requestData = {
     body: JSON.stringify(data),

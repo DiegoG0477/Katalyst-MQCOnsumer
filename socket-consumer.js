@@ -43,7 +43,7 @@ var PASSWORD = encodeURIComponent("guest12345");
 var HOSTNAME = "44.217.29.217:";
 var PORT = 5672;
 var RABBITMQ_DATA = "Medical";
-var WEBSOCKET_SERVER_URL = "http://3.212.10.41/";
+var WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
 var socketIO;
 function sendDatatoAPI(data) {
     return __awaiter(this, void 0, void 0, function () {
@@ -51,7 +51,7 @@ function sendDatatoAPI(data) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    apiUrl = 'https://fk5dcofqb55mxnedrc5e6p54oe0rnykq.lambda-url.us-east-1.on.aws/';
+                    apiUrl = 'http:44.221.150.52/data/medical';
                     requestData = {
                         body: JSON.stringify(data),
                     };
