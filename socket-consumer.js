@@ -40,7 +40,7 @@ var amqp = require("amqplib/callback_api");
 var socketIoClient = require("socket.io-client");
 var USERNAME = "katalyst";
 var PASSWORD = encodeURIComponent("guest12345");
-var HOSTNAME = "44.217.29.217:";
+var HOSTNAME = "44.217.29.217";
 var PORT = 5672;
 var RABBITMQ_DATA = "Medical";
 var WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
@@ -51,7 +51,7 @@ function sendDatatoAPI(data) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    apiUrl = 'http:44.221.150.52/data/medical';
+                    apiUrl = 'http://44.221.150.52/medical/data';
                     requestData = {
                         body: JSON.stringify(data),
                     };
@@ -65,7 +65,7 @@ function sendDatatoAPI(data) {
                         })];
                 case 1:
                     response = _a.sent();
-                    console.log('API DATA RESPONSE: ', response);
+                    console.log('API DATA RESPONSE: ', response.status);
                     return [2 /*return*/];
             }
         });
@@ -73,10 +73,13 @@ function sendDatatoAPI(data) {
 }
 function connect() {
     return __awaiter(this, void 0, void 0, function () {
+        var url_1;
         var _this = this;
         return __generator(this, function (_a) {
             try {
-                amqp.connect("amqp://".concat(USERNAME, ":").concat(PASSWORD, "@").concat(HOSTNAME, ":").concat(PORT), function (err, conn) {
+                url_1 = "amqp://".concat(USERNAME, ":").concat(PASSWORD, "@").concat(HOSTNAME, ":").concat(PORT);
+                amqp.connect(url_1, function (err, conn) {
+                    console.log("Connecting to RabbitMQ", url_1);
                     if (err)
                         throw new Error(err);
                     conn.createChannel(function (errChanel, channel) {

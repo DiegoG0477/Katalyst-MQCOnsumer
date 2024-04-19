@@ -4,7 +4,7 @@ import { Socket } from "socket.io-client";
 
 const USERNAME = "katalyst"
 const PASSWORD = encodeURIComponent("guest12345");
-const HOSTNAME = "44.217.29.217:"
+const HOSTNAME = "44.217.29.217"
 const PORT = 5672
 const RABBITMQ_DATA = "Medical";
 const WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
@@ -12,7 +12,7 @@ const WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
 let socketIO: Socket;
 
 async function sendDatatoAPI(data: any) {
-  const apiUrl = 'http:44.221.150.52/data/medical';
+  const apiUrl = 'http://44.221.150.52/medical/data';
 
   const requestData = {
     body: JSON.stringify(data),
@@ -28,12 +28,14 @@ async function sendDatatoAPI(data: any) {
     body: requestData.body,
   });
 
-  console.log('API DATA RESPONSE: ',response);
+  console.log('API DATA RESPONSE: ',response.status);
 }
 
 async function connect() {
   try {
-    amqp.connect(`amqp://${USERNAME}:${PASSWORD}@${HOSTNAME}:${PORT}`, (err: any, conn: amqp.Connection) => {
+    const url = `amqp://${USERNAME}:${PASSWORD}@${HOSTNAME}:${PORT}`;
+    amqp.connect(url, (err: any, conn: amqp.Connection) => {
+      console.log("Connecting to RabbitMQ", url);
       if (err) throw new Error(err);
 
       conn.createChannel((errChanel: any, channel: amqp.Channel) => {
