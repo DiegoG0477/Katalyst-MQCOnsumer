@@ -43,7 +43,7 @@ var PASSWORD = encodeURIComponent("guest12345");
 var HOSTNAME = "44.217.29.217";
 var PORT = 5672;
 var RABBITMQ_DATA = "Medical";
-var WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
+var WEBSOCKET_SERVER_URL = "http:/184.72.246.90/";
 var socketIO;
 function sendDatatoAPI(data) {
     return __awaiter(this, void 0, void 0, function () {

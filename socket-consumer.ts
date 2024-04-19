@@ -7,7 +7,7 @@ const PASSWORD = encodeURIComponent("guest12345");
 const HOSTNAME = "44.217.29.217"
 const PORT = 5672
 const RABBITMQ_DATA = "Medical";
-const WEBSOCKET_SERVER_URL = "http://184.72.246.90/";
+const WEBSOCKET_SERVER_URL = "http:/184.72.246.90/";
 
 let socketIO: Socket;
 
