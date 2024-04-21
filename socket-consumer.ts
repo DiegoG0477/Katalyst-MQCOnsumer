@@ -66,8 +66,8 @@ async function connect() {
         channel.consume(RABBITMQ_DATA, async (data: amqp.Message | null) => {
           if (data?.content !== undefined) {
             const parsedContent = JSON.parse(data.content.toString());
-            console.log("notification:medical:", parsedContent);
-            socketIO.emit("notification:medical", parsedContent);
+            console.log("data:medical:", parsedContent);
+            socketIO.emit("data:medical", parsedContent);
             await sendDatatoAPI(parsedContent);
             channel.ack(data);
           }
