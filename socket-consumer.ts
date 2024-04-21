@@ -8,7 +8,7 @@ const PASSWORD = encodeURIComponent("guest12345");
 const HOSTNAME = "44.217.29.217"
 const PORT = 5672
 const RABBITMQ_DATA = "DataMed";
-const WEBSOCKET_SERVER_URL = "184.72.246.90";
+const WEBSOCKET_SERVER_URL = "http://184.72.246.90";
 
 let socketIO: Socket;
 
@@ -60,7 +60,13 @@ async function connect() {
           },
           headers: {
             "access_token": token,
-          }
+          },
+          transports: ['websocket'], // Forzar el uso de WebSocket
+          upgrade: false // Deshabilitar actualizaciones automáticas (no se necesita en Node.js)
+        });
+
+        socketIO.on("connect", () => {
+          console.log("Connected to WebSocket Server");
         });
 
         channel.consume(RABBITMQ_DATA, async (data: amqp.Message | null) => {
