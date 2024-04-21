@@ -1,6 +1,6 @@
 import * as amqp from "amqplib/callback_api";
 const socketIoClient = require("socket.io-client");
-import jwt from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
 import { Socket } from "socket.io-client";
 
 const USERNAME = "katalyst"
@@ -34,9 +34,11 @@ async function sendDatatoAPI(data: any) {
 
 async function generateToken() {
   const secret = "secret-katalyst";
-  const token = await jwt.sign({ username: USERNAME }, secret, {
+  const token = await sign({ username: USERNAME }, secret, {
     expiresIn: "1h",
   });
+
+  return token;
 }
 
 async function connect() {
@@ -65,6 +67,9 @@ async function connect() {
         socketIO = socketIoClient(WEBSOCKET_SERVER_URL, {
           auth: {
             token: token,
+          },
+          headers: {
+            "access_token": token,
           }
         });
       });

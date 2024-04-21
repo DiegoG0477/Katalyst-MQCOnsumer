@@ -38,12 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var amqp = require("amqplib/callback_api");
 var socketIoClient = require("socket.io-client");
+var jsonwebtoken_1 = require("jsonwebtoken");
 var USERNAME = "katalyst";
 var PASSWORD = encodeURIComponent("guest12345");
 var HOSTNAME = "44.217.29.217";
 var PORT = 5672;
-var RABBITMQ_DATA = "Medical";
-var WEBSOCKET_SERVER_URL = "http:/184.72.246.90/";
+var RABBITMQ_DATA = "DataMed";
+var WEBSOCKET_SERVER_URL = "184.72.246.90";
 var socketIO;
 function sendDatatoAPI(data) {
     return __awaiter(this, void 0, void 0, function () {
@@ -71,47 +72,77 @@ function sendDatatoAPI(data) {
         });
     });
 }
+function generateToken() {
+    return __awaiter(this, void 0, void 0, function () {
+        var secret, token;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    secret = "secret-katalyst";
+                    return [4 /*yield*/, (0, jsonwebtoken_1.sign)({ username: USERNAME }, secret, {
+                            expiresIn: "1h",
+                        })];
+                case 1:
+                    token = _a.sent();
+                    return [2 /*return*/, token];
+            }
+        });
+    });
+}
 function connect() {
     return __awaiter(this, void 0, void 0, function () {
-        var url_1;
+        var url_1, token_1, err_1;
         var _this = this;
         return __generator(this, function (_a) {
-            try {
-                url_1 = "amqp://".concat(USERNAME, ":").concat(PASSWORD, "@").concat(HOSTNAME, ":").concat(PORT);
-                amqp.connect(url_1, function (err, conn) {
-                    console.log("Connecting to RabbitMQ", url_1);
-                    if (err)
-                        throw new Error(err);
-                    conn.createChannel(function (errChanel, channel) {
-                        if (errChanel)
-                            throw new Error(errChanel);
-                        channel.assertQueue(RABBITMQ_DATA, { durable: true, arguments: { "x-queue-type": "quorum" } });
-                        channel.consume(RABBITMQ_DATA, function (data) { return __awaiter(_this, void 0, void 0, function () {
-                            var parsedContent;
-                            return __generator(this, function (_a) {
-                                switch (_a.label) {
-                                    case 0:
-                                        if (!((data === null || data === void 0 ? void 0 : data.content) !== undefined)) return [3 /*break*/, 2];
-                                        parsedContent = JSON.parse(data.content.toString());
-                                        console.log("data:medical:", parsedContent);
-                                        socketIO.emit("data:medical", parsedContent);
-                                        return [4 /*yield*/, sendDatatoAPI(parsedContent)];
-                                    case 1:
-                                        _a.sent();
-                                        channel.ack(data);
-                                        _a.label = 2;
-                                    case 2: return [2 /*return*/];
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    url_1 = "amqp://".concat(USERNAME, ":").concat(PASSWORD, "@").concat(HOSTNAME, ":").concat(PORT);
+                    return [4 /*yield*/, generateToken()];
+                case 1:
+                    token_1 = _a.sent();
+                    amqp.connect(url_1, function (err, conn) {
+                        console.log("Connecting to RabbitMQ", url_1);
+                        if (err)
+                            throw new Error(err);
+                        conn.createChannel(function (errChanel, channel) {
+                            if (errChanel)
+                                throw new Error(errChanel);
+                            channel.assertQueue(RABBITMQ_DATA, { durable: true, arguments: { "x-queue-type": "quorum" } });
+                            channel.consume(RABBITMQ_DATA, function (data) { return __awaiter(_this, void 0, void 0, function () {
+                                var parsedContent;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            if (!((data === null || data === void 0 ? void 0 : data.content) !== undefined)) return [3 /*break*/, 2];
+                                            parsedContent = JSON.parse(data.content.toString());
+                                            console.log("data:medical:", parsedContent);
+                                            socketIO.emit("data:medical", parsedContent);
+                                            return [4 /*yield*/, sendDatatoAPI(parsedContent)];
+                                        case 1:
+                                            _a.sent();
+                                            channel.ack(data);
+                                            _a.label = 2;
+                                        case 2: return [2 /*return*/];
+                                    }
+                                });
+                            }); });
+                            socketIO = socketIoClient(WEBSOCKET_SERVER_URL, {
+                                auth: {
+                                    token: token_1,
+                                },
+                                headers: {
+                                    "access_token": token_1,
                                 }
                             });
-                        }); });
-                        socketIO = socketIoClient(WEBSOCKET_SERVER_URL);
+                        });
                     });
-                });
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    throw new Error(err_1);
+                case 3: return [2 /*return*/];
             }
-            catch (err) {
-                throw new Error(err);
-            }
-            return [2 /*return*/];
         });
     });
 }
