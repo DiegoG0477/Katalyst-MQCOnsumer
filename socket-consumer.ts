@@ -54,22 +54,22 @@ async function connect() {
 
         channel.assertQueue(RABBITMQ_DATA, {durable:true, arguments:{"x-queue-type":"quorum"}});
 
-        channel.consume(RABBITMQ_DATA, async (data: amqp.Message | null) => {
-          if (data?.content !== undefined) {
-            const parsedContent = JSON.parse(data.content.toString());
-            console.log("data:medical:", parsedContent);
-            socketIO.emit("data:medical", parsedContent);
-            await sendDatatoAPI(parsedContent);
-            channel.ack(data);
-          }
-        });
-
         socketIO = socketIoClient(WEBSOCKET_SERVER_URL, {
           auth: {
             token: token,
           },
           headers: {
             "access_token": token,
+          }
+        });
+
+        channel.consume(RABBITMQ_DATA, async (data: amqp.Message | null) => {
+          if (data?.content !== undefined) {
+            const parsedContent = JSON.parse(data.content.toString());
+            console.log("notification:medical:", parsedContent);
+            socketIO.emit("notification:medical", parsedContent);
+            await sendDatatoAPI(parsedContent);
+            channel.ack(data);
           }
         });
       });
