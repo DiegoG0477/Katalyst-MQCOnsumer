@@ -1,13 +1,14 @@
 import * as amqp from "amqplib/callback_api";
 const socketIoClient = require("socket.io-client");
+import jwt from "jsonwebtoken";
 import { Socket } from "socket.io-client";
 
 const USERNAME = "katalyst"
 const PASSWORD = encodeURIComponent("guest12345");
 const HOSTNAME = "44.217.29.217"
 const PORT = 5672
-const RABBITMQ_DATA = "Medical";
-const WEBSOCKET_SERVER_URL = "http:/184.72.246.90/";
+const RABBITMQ_DATA = "DataMed";
+const WEBSOCKET_SERVER_URL = "184.72.246.90";
 
 let socketIO: Socket;
 
@@ -31,9 +32,17 @@ async function sendDatatoAPI(data: any) {
   console.log('API DATA RESPONSE: ',response.status);
 }
 
+async function generateToken() {
+  const secret = "secret-katalyst";
+  const token = await jwt.sign({ username: USERNAME }, secret, {
+    expiresIn: "1h",
+  });
+}
+
 async function connect() {
   try {
     const url = `amqp://${USERNAME}:${PASSWORD}@${HOSTNAME}:${PORT}`;
+    const token = await generateToken();
     amqp.connect(url, (err: any, conn: amqp.Connection) => {
       console.log("Connecting to RabbitMQ", url);
       if (err) throw new Error(err);
@@ -53,7 +62,11 @@ async function connect() {
           }
         });
 
-        socketIO = socketIoClient(WEBSOCKET_SERVER_URL);
+        socketIO = socketIoClient(WEBSOCKET_SERVER_URL, {
+          auth: {
+            token: token,
+          }
+        });
       });
     });
   } catch (err: any) {
