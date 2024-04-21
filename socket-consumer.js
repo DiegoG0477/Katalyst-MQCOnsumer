@@ -109,6 +109,14 @@ function connect() {
                             if (errChanel)
                                 throw new Error(errChanel);
                             channel.assertQueue(RABBITMQ_DATA, { durable: true, arguments: { "x-queue-type": "quorum" } });
+                            socketIO = socketIoClient(WEBSOCKET_SERVER_URL, {
+                                auth: {
+                                    token: token_1,
+                                },
+                                headers: {
+                                    "access_token": token_1,
+                                }
+                            });
                             channel.consume(RABBITMQ_DATA, function (data) { return __awaiter(_this, void 0, void 0, function () {
                                 var parsedContent;
                                 return __generator(this, function (_a) {
@@ -116,8 +124,8 @@ function connect() {
                                         case 0:
                                             if (!((data === null || data === void 0 ? void 0 : data.content) !== undefined)) return [3 /*break*/, 2];
                                             parsedContent = JSON.parse(data.content.toString());
-                                            console.log("data:medical:", parsedContent);
-                                            socketIO.emit("data:medical", parsedContent);
+                                            console.log("notification:medical:", parsedContent);
+                                            socketIO.emit("notification:medical", parsedContent);
                                             return [4 /*yield*/, sendDatatoAPI(parsedContent)];
                                         case 1:
                                             _a.sent();
@@ -127,14 +135,6 @@ function connect() {
                                     }
                                 });
                             }); });
-                            socketIO = socketIoClient(WEBSOCKET_SERVER_URL, {
-                                auth: {
-                                    token: token_1,
-                                },
-                                headers: {
-                                    "access_token": token_1,
-                                }
-                            });
                         });
                     });
                     return [3 /*break*/, 3];
