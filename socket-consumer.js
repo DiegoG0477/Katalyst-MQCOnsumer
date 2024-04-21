@@ -124,8 +124,8 @@ function connect() {
                                         case 0:
                                             if (!((data === null || data === void 0 ? void 0 : data.content) !== undefined)) return [3 /*break*/, 2];
                                             parsedContent = JSON.parse(data.content.toString());
-                                            console.log("notification:medical:", parsedContent);
-                                            socketIO.emit("notification:medical", parsedContent);
+                                            console.log("data:medical:", parsedContent);
+                                            socketIO.emit("data:medical", parsedContent);
                                             return [4 /*yield*/, sendDatatoAPI(parsedContent)];
                                         case 1:
                                             _a.sent();
